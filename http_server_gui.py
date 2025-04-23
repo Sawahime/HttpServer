@@ -104,20 +104,6 @@ class SimpleHTTPServerGUI:
         main_frame = ttk.Frame(self.root, padding="10")
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # ttk.Label(main_frame, text="Server Path:").grid(row=0, column=0, sticky=tk.W)
-        # self.dir_entry = ttk.Entry(main_frame, width=50)
-        # self.dir_entry.grid(row=0, column=1, sticky=tk.EW)
-
-        # 设置默认目录为 .exe 所在目录或上级目录
-        # if getattr(sys, 'frozen', False):
-        #     base_dir = os.path.abspath(os.path.join(os.path.dirname(sys.executable), ".."))
-        # else:
-        #     base_dir = os.path.abspath("D:/dev/Python Script/Server")
-        # self.dir_entry.insert(0, base_dir)
-
-        # browse_btn = ttk.Button(main_frame, text="Browse...", command=self.browse_directory)
-        # browse_btn.grid(row=0, column=2, padx=(5, 0))
-
         ttk.Label(main_frame, text="Port:").grid(row=1, column=0, sticky=tk.W)
         self.port_entry = ttk.Entry(main_frame, width=10)
         self.port_entry.grid(row=1, column=1, sticky=tk.W)
@@ -222,11 +208,6 @@ class SimpleHTTPServerGUI:
         if self.running:
             return
 
-        # directory = self.dir_entry.get()
-        # if not os.path.isdir(directory):
-        #     messagebox.showerror("Error", "The specified directory does not exist!")
-        #     return
-
         try:
             port = int(self.port_entry.get())
             if port < 1 or port > 65535:
@@ -243,7 +224,6 @@ class SimpleHTTPServerGUI:
             messagebox.showerror("Error", "Please enter a valid packet size (positive integer)")
             return
 
-        # os.chdir(directory)
         self.request_count = 0  # 重置请求计数器
 
         handler = lambda *args: NoCacheHTTPRequestHandler(*args, gui_ref=self)
@@ -260,7 +240,6 @@ class SimpleHTTPServerGUI:
             self.update_btn.config(state=tk.NORMAL)
 
             self.log_message(f"Server started on port {port}")
-            # self.log_message(f"Serving directory: {directory}")
             self.log_message(f"Initial packet size: {self.packet_size}B")
             self.log_message(f"Visit: http://localhost:{port}/")
 
