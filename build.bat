@@ -1,0 +1,1 @@
+pyinstaller.exe --onefile --windowed http_server_gui.py
