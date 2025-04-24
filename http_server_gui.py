@@ -240,17 +240,17 @@ class SimpleHTTPServerGUI:
         self.log_text.grid(row=1, column=0, sticky=tk.NSEW, padx=(0, 5))
 
         # 请求日志
-        ttk.Label(logs_frame, text="Request Logs:").grid(row=0, column=1, sticky=tk.W)
+        ttk.Label(logs_frame, text="Request Logs:").grid(row=0, column=2, sticky=tk.W)
         self.request_log_text = tk.Text(
             logs_frame, height=10, width=40, state=tk.DISABLED
         )
-        self.request_log_text.grid(row=1, column=1, sticky=tk.NSEW)
+        self.request_log_text.grid(row=1, column=2, sticky=tk.NSEW)
 
         # 服务器日志滚动条
         log_scrollbar = ttk.Scrollbar(
             logs_frame, orient=tk.VERTICAL, command=self.log_text.yview
         )
-        log_scrollbar.grid(row=1, column=2, sticky=tk.NS)
+        log_scrollbar.grid(row=1, column=1, sticky=tk.NS)
         self.log_text.config(yscrollcommand=log_scrollbar.set)
 
         # 请求日志滚动条
