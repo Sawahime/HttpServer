@@ -2,7 +2,7 @@ import requests
 import time
 import statistics
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, font
 import threading
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -13,6 +13,10 @@ class NetworkTestClient:
     def __init__(self, root):
         self.root = root
         self.root.title("Network Test Client")
+        
+        # 默认字体大小
+        self.font_size = 10
+        self.text_widgets = []
         
         # 测试结果
         self.test_results = {
@@ -25,6 +29,9 @@ class NetworkTestClient:
         
         # 设置界面
         self.setup_ui()
+        
+        # 创建菜单
+        self.create_menu()
         
     def setup_ui(self):
         main_frame = ttk.Frame(self.root, padding="10")
@@ -87,6 +94,7 @@ class NetworkTestClient:
         # 文本结果
         self.results_text = tk.Text(results_frame, height=10, width=40, state=tk.DISABLED)
         self.results_text.pack(fill=tk.BOTH, expand=True)
+        self.text_widgets.append(self.results_text)
         
         # 图表框架
         graph_frame = ttk.LabelFrame(main_frame, text="Performance Graphs", padding="5")
@@ -109,6 +117,7 @@ class NetworkTestClient:
         # 测试日志
         self.log_text = tk.Text(logs_frame, height=8, width=80, state=tk.DISABLED)
         self.log_text.pack(fill=tk.BOTH, expand=True)
+        self.text_widgets.append(self.log_text)
         
         # 配置网格权重
         main_frame.columnconfigure(0, weight=1)
@@ -120,6 +129,57 @@ class NetworkTestClient:
         self.test_running = False
         self.test_thread = None
         self.stop_requested = False
+        
+        # 绑定鼠标滚轮事件（按住Ctrl调整字体大小）
+        self.bind_mouse_wheel()
+    
+    def create_menu(self):
+        menubar = tk.Menu(self.root)
+        
+        # 字体菜单
+        font_menu = tk.Menu(menubar, tearoff=0)
+        font_menu.add_command(label="Increase Font Size", command=lambda: self.change_font_size(1))
+        font_menu.add_command(label="Decrease Font Size", command=lambda: self.change_font_size(-1))
+        font_menu.add_separator()
+        font_menu.add_command(label="Reset Font Size", command=lambda: self.change_font_size(0))
+        menubar.add_cascade(label="Font", menu=font_menu)
+        
+        self.root.config(menu=menubar)
+    
+    def change_font_size(self, delta):
+        if delta == 0:
+            # 重置为默认大小
+            self.font_size = 10
+        else:
+            # 调整大小，限制在8-24之间
+            new_size = self.font_size + delta
+            if 8 <= new_size <= 24:
+                self.font_size = new_size
+            else:
+                return
+        
+        # 更新所有文本部件的字体大小
+        font_obj = font.Font(size=self.font_size)
+        for widget in self.text_widgets:
+            widget.configure(font=font_obj)
+    
+    def bind_mouse_wheel(self):
+        # 为文本部件绑定鼠标滚轮事件
+        for widget in self.text_widgets:
+            widget.bind("<Control-MouseWheel>", self.on_mouse_wheel)
+            widget.bind("<Configure>", self.on_text_configure)
+    
+    def on_mouse_wheel(self, event):
+        # 按住Ctrl键时滚动鼠标滚轮调整字体大小
+        if event.state & 0x0004:  # 检查Ctrl键是否按下
+            if event.delta > 0:
+                self.change_font_size(1)
+            else:
+                self.change_font_size(-1)
+    
+    def on_text_configure(self, event):
+        # 当文本框大小改变时调整内部布局
+        pass
     
     def start_test(self):
         if self.test_running:
